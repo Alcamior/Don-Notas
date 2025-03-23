@@ -90,8 +90,6 @@ export const Item = ({
 
     const ChevronIcon = expanded ? ChevronDown : ChevronRight;
 
-
-
     return (
         <div
             onClick={onClick}
@@ -127,7 +125,7 @@ export const Item = ({
                 select-none items-center gap-1 rounded border bg-muted
                 px-1.5 font-mono text-[10px] font-medium text-muted-foreground
                 opacity-100">
-                    <span className="text-xs">CMD</span>k
+                    <span className="text-xs">CTRL + </span>k
                 </kbd>
             )}
 
