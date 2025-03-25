@@ -26,7 +26,7 @@ export const Banner = ({
 
         toast.promise(promise, {
             loading: "Borrando nota...",
-            success: "Nota eliminada!",
+            success: "¡Nota eliminada!",
             error: "No se pudo eliminar la nota."
         });
 
@@ -38,7 +38,7 @@ export const Banner = ({
 
         toast.promise(promise, {
             loading: "Restaurando nota...",
-            success: "Nota restaurada con éxito!",
+            success: "¡Nota restaurada con éxito!",
             error: "No se pudo restaurar la nota."
         });
     };
@@ -69,5 +69,5 @@ export const Banner = ({
                 </Button>
             </ConfirmModal>
         </div>
-    )
-}
+    );
+};
