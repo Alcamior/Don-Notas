@@ -5,7 +5,10 @@ const nextConfig: NextConfig = {
       domains: [
         "files.edgestore.dev"
       ]
-    }
+    },
+
+    reactStrictMode: false,
+    
 };
 
 export default nextConfig;

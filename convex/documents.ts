@@ -302,6 +302,7 @@ export const update = mutation({
         }
         
         const document = await ctx.db.patch(args.id, {
+            content: args.content,
             ...rest,
         });
         
