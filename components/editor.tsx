@@ -3,7 +3,8 @@ import "@blocknote/core/fonts/inter.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button"; // Asegúrate de importar tu componente Button
 
 interface EditorProps {
   onChange: (value: string) => void;
@@ -16,13 +17,13 @@ export function BlockNoteEditor({
   initialContent,
   editable 
 }: EditorProps) {
-  const [lastSavedContent, setLastSavedContent] = useState("");
+  const [hasChanges, setHasChanges] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const editor = useCreateBlockNote({
     initialContent: initialContent ? safeJsonParse(initialContent) : undefined
   });
 
-  // Función para parsear de forma segura
   function safeJsonParse(content: string) {
     try {
       const parsed = JSON.parse(content);
@@ -32,31 +33,44 @@ export function BlockNoteEditor({
     }
   }
 
-  useEffect(() => {
-    const handleChange = () => {
-      const currentContent = JSON.stringify(editor.document);
-      
-      // Solo guardar si el contenido realmente cambió
-      if (currentContent !== lastSavedContent) {
-        onChange(currentContent);
-        setLastSavedContent(currentContent);
-      }
-    };
-
-    // Usamos un timeout para evitar guardados excesivos
-    const timer = setTimeout(handleChange, 1000);
+  const handleSave = async () => {
+    if (!editor.document) return;
     
-    return () => {
-      clearTimeout(timer);
-      // Guardar al desmontar el componente
-      if (editor.document) {
-        const finalContent = JSON.stringify(editor.document);
-        if (finalContent !== lastSavedContent) {
-          onChange(finalContent);
-        }
-      }
-    };
-  }, [editor.document, lastSavedContent, onChange]);
+    setIsSaving(true);
+    try {
+      const currentContent = JSON.stringify(editor.document);
+      await onChange(currentContent);
+      setHasChanges(false);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
-  return <BlockNoteView editor={editor} editable={editable} />;
+  // Escuchar cambios para mostrar el estado "no guardado"
+  editor.onEditorContentChange(() => {
+    setHasChanges(true);
+  });
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-4 justify-start mt-4">
+        <Button 
+            onClick={handleSave}
+            disabled={!hasChanges || isSaving}
+            className="ml-13"
+            >
+            {isSaving ? "Guardando..." : "Guardar documento"}
+        </Button>
+        <div>
+          {hasChanges && (
+            <span className="text-sm text-muted-foreground">
+              Tienes cambios sin guardar
+            </span>
+          )}
+        </div>
+      </div>
+      
+      <BlockNoteView editor={editor} editable={editable} />
+    </div>
+  );
 }

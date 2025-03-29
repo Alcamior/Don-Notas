@@ -26,12 +26,18 @@ const DocumentIdPage = ({
 
     const update = useMutation(api.documents.update);
 
-    const onChange = (content: string) => {
-        update({
-          id: documentId, 
-          content
+    const handleSave = async (content: string) => {
+    try {
+        await update({
+        id: documentId, 
+        content
         });
-      };
+        // Puedes añadir un toast de éxito aquí si quieres
+    } catch (error) {
+        console.error("Error al guardar:", error);
+        // Puedes añadir un toast de error aquí
+    }
+    };
     
     if (document === undefined) {  
         return (  
@@ -59,7 +65,7 @@ const DocumentIdPage = ({
             <div className="md:max-w-3xl lg:max-w-4xl mx-auto">
                 <Toolbar initialData={document} /> 
                 <Editor 
-                    onChange={onChange}
+                    onChange={handleSave}
                     initialContent={document.content}
                 />
             </div>
