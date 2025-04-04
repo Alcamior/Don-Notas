@@ -11,6 +11,7 @@ import { api } from "@/convex/_generated/api";
 import { Item } from "./item";
 import { toast } from "sonner";
 import { DocumentList } from "./document-list";
+import Link from "next/link"; // Importa el Link de Next.js
 import { 
     Popover,
     PopoverTrigger,
@@ -171,6 +172,9 @@ export const Navigation = () => {
                                 <TrashBox />
                         </PopoverContent>
                     </Popover>
+                    <Link href="/calendar" className="text-muted-foreground">
+                            Calendario
+                    </Link>
                 </div>
                 <div 
                     onMouseDown={handleMouseDown}
