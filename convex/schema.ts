@@ -13,5 +13,14 @@ export default defineSchema ({
         isPublished: v.boolean(),
     })
     .index("by_user",["userId"])
-    .index("by_user_parent",["userId","parentDocument"])
+    .index("by_user_parent",["userId","parentDocument"]),
+
+    events: defineTable({
+        title: v.string(),
+        start: v.string(), // formato ISO
+        end: v.optional(v.string()),
+        allDay: v.optional(v.boolean()),
+        userId: v.string(),
+        completed: v.optional(v.boolean()) // Campo adicional para indicar si el evento está completado
+      }).index("by_user", ["userId"])
 });

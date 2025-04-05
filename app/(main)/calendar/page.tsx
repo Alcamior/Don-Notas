@@ -4,7 +4,6 @@ import Calendar from '@/components/ui/calendar';  // Asegúrate de que la ruta s
 const CalendarPage = () => {
   return (
     <div>
-      <h1>Mi Calendario de Tareas</h1>
       <Calendar />  {/* Mostrar el calendario aquí */}
     </div>
   );

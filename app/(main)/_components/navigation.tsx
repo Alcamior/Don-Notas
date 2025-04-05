@@ -11,6 +11,7 @@ import { api } from "@/convex/_generated/api";
 import { Item } from "./item";
 import { toast } from "sonner";
 import { DocumentList } from "./document-list";
+import Image from "next/image";
 import Link from "next/link"; // Importa el Link de Next.js
 import { 
     Popover,
@@ -172,9 +173,19 @@ export const Navigation = () => {
                                 <TrashBox />
                         </PopoverContent>
                     </Popover>
-                    <Link href="/calendar" className="text-muted-foreground">
-                            Calendario
-                    </Link>
+                    <Link 
+    href="/calendar" 
+    className="flex items-center gap-3 px-4 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+  >
+    <Image 
+      src="/calendario.png" 
+      alt="Icono calendario"
+      width={16}
+      height={16}
+      className="w-4 h-4" // Mismo tamaño que el texto
+    />
+    <span>Calendario</span>
+  </Link>
                 </div>
                 <div 
                     onMouseDown={handleMouseDown}
