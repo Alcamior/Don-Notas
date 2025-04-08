@@ -4,7 +4,7 @@ import { mutation, query } from "./_generated/server";
 export const createEvent = mutation({
   args: {
     title: v.string(),
-    start: v.string(), // formato ISO
+    start: v.string(),
     end: v.optional(v.string()),
     allDay: v.optional(v.boolean()),
   },
@@ -19,36 +19,53 @@ export const createEvent = mutation({
       start: args.start,
       end: args.end,
       allDay: args.allDay ?? false,
-      completed: false, // <--- campo nuevo
+      completed: false,
       userId
     });
   }
 });
+
 export const toggleEventCompletion = mutation({
-    args: {
-      id: v.id("events"), // ¡Usa v.id("events") en lugar de v.string()!
-    },
-    handler: async (ctx, args) => {
-      const identity = await ctx.auth.getUserIdentity();
-      if (!identity) throw new Error("No está autenticado");
-  
-      const userId = identity.subject;
-  
-      // Obtener el evento actual
-      const event = await ctx.db.get(args.id); // Usar get() para buscar por ID directamente
-      if (!event || event.userId !== userId) {
-        throw new Error("Evento no encontrado o no autorizado");
-      }
-  
-      // Actualizar el campo "completed" usando patch
-      await ctx.db.patch(args.id, {
-        completed: !event.completed,
-      });
-  
-      // Retorna el nuevo estado (opcional)
-      return !event.completed;
-    },
-  });
+  args: {
+    id: v.id("events"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No está autenticado");
+
+    const userId = identity.subject;
+
+    const event = await ctx.db.get(args.id);
+    if (!event || event.userId !== userId) {
+      throw new Error("Evento no encontrado o no autorizado");
+    }
+
+    await ctx.db.patch(args.id, {
+      completed: !event.completed,
+    });
+
+    return !event.completed;
+  },
+});
+
+export const deleteEvent = mutation({
+  args: {
+    id: v.id("events"),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No está autenticado");
+
+    const userId = identity.subject;
+    const event = await ctx.db.get(args.id);
+
+    if (!event || event.userId !== userId) {
+      throw new Error("Evento no encontrado o no autorizado");
+    }
+
+    await ctx.db.delete(args.id);
+  },
+});
 
 export const getUserEvents = query({
   handler: async (ctx) => {
@@ -62,4 +79,28 @@ export const getUserEvents = query({
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .collect();
   }
+});
+
+export const updateEventDate = mutation({
+  args: {
+    id: v.id("events"),
+    start: v.string(),
+    end: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("No está autenticado");
+
+    const userId = identity.subject;
+    const event = await ctx.db.get(args.id);
+
+    if (!event || event.userId !== userId) {
+      throw new Error("Evento no encontrado o no autorizado");
+    }
+
+    await ctx.db.patch(args.id, {
+      start: args.start,
+      end: args.end ?? args.start,
+    });
+  },
 });

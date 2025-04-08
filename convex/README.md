@@ -6,12 +6,12 @@ See https://docs.convex.dev/functions for more.
 A query function that takes two arguments looks like:
 
 ```ts
-// functions.js
+// functions.js npx convex dev  ,  npm run dev
 import { query } from "./_generated/server";
 import { v } from "convex/values";
 
 export const myQueryFunction = query({
-  // Validators for arguments.
+  // Validators for arguments. 
   args: {
     first: v.number(),
     second: v.string(),
