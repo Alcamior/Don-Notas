@@ -49,20 +49,19 @@ const Calendar = () => {
   const renderEventContent = (eventInfo: any) => {
     const isCompleted = eventInfo.event.extendedProps.completed;
     const eventId = eventInfo.event.extendedProps._id;
-
+  
     return (
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          backgroundColor: "#f3f4f6",
-          padding: "4px 8px",
-          borderRadius: "4px",
-          border: "none",
-          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: "6px",
+          padding: "2px 4px",
+          overflow: "visible",
+          flexDirection: "row"
         }}
       >
+        {/* Bolita de estado */}
         <div
           onClick={(e) => {
             e.stopPropagation();
@@ -70,26 +69,30 @@ const Calendar = () => {
           }}
           style={{
             cursor: "pointer",
-            width: "18px",
-            height: "18px",
+            width: "10px",
+            height: "10px",
             borderRadius: "50%",
-            border: isCompleted ? "none" : "2px solid #000",
-            backgroundColor: isCompleted ? "#000" : "transparent",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            border: isCompleted ? "none" : "1px solid #2C3E50",
+            backgroundColor: isCompleted ? "#2C3E50" : "transparent",
+            flexShrink: 0,
           }}
         />
+  
+        {/* Título del evento */}
         <span
           style={{
             textDecoration: isCompleted ? "line-through" : "none",
-            color: "#000",
-            fontSize: "14px",
-            flex: 1,
+            color: "#2C3E50",
+            fontSize: "13px",
+            whiteSpace: "normal", // permite saltos de línea
+            wordBreak: "break-word",
+            flexGrow: 1,
           }}
         >
           {eventInfo.event.title}
         </span>
+  
+        {/* Icono de eliminar */}
         <img
           src="/eliminar.png"
           alt="Eliminar"
@@ -103,6 +106,7 @@ const Calendar = () => {
             width: "10px",
             height: "10px",
             cursor: "pointer",
+            flexShrink: 0,
           }}
         />
       </div>
