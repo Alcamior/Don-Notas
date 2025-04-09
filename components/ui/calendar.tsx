@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -15,6 +15,20 @@ const Calendar = () => {
   const toggleComplete = useMutation(api.events.toggleEventCompletion);
   const deleteEvent = useMutation(api.events.deleteEvent);
   const updateEventDate = useMutation(api.events.updateEventDate);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 600);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleEventDrop = async (info: any) => {
     const { event } = info;
@@ -45,19 +59,23 @@ const Calendar = () => {
   const renderEventContent = (eventInfo: any) => {
     const isCompleted = eventInfo.event.extendedProps.completed;
     const eventId = eventInfo.event.extendedProps._id;
-  
+
     return (
       <div
         style={{
           display: "flex",
-          alignItems: "flex-start",
-          gap: "6px",
-          padding: "2px 4px",
-          overflow: "visible",
-          flexDirection: "row"
+          alignItems: "center",
+          gap: "2px",
+          backgroundColor: "#f3f4f6",
+          padding: "1px 2px",
+          borderRadius: "3px",
+          border: "none",
+          justifyContent: "space-between",
+          width: "100%",
+          minHeight: "20px",
+          boxSizing: "border-box",
         }}
       >
-        {/* Bolita de estado */}
         <div
           onClick={(e) => {
             e.stopPropagation();
@@ -65,30 +83,33 @@ const Calendar = () => {
           }}
           style={{
             cursor: "pointer",
-            width: "10px",
-            height: "10px",
+            width: "12px",
+            height: "12px",
             borderRadius: "50%",
-            border: isCompleted ? "none" : "1px solid #2C3E50",
-            backgroundColor: isCompleted ? "#2C3E50" : "transparent",
+            border: isCompleted ? "none" : "2px solid #000",
+            backgroundColor: isCompleted ? "#000" : "transparent",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             flexShrink: 0,
           }}
         />
-  
-        {/* Título del evento */}
         <span
           style={{
             textDecoration: isCompleted ? "line-through" : "none",
-            color: "#2C3E50",
-            fontSize: "13px",
-            whiteSpace: "normal", // permite saltos de línea
-            wordBreak: "break-word",
-            flexGrow: 1,
+            color: "#000",
+            fontSize: isMobile ? "10px" : "12px",
+            flex: "1 1 auto",
+            minWidth: "0",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
+            textOverflow: "ellipsis",
+            lineHeight: "1.2",
+            padding: "0 2px",
           }}
         >
           {eventInfo.event.title}
         </span>
-  
-        {/* Icono de eliminar */}
         <img
           src="/eliminar.png"
           alt="Eliminar"
@@ -99,8 +120,8 @@ const Calendar = () => {
             }
           }}
           style={{
-            width: "10px",
-            height: "10px",
+            width: "7px",
+            height: "7px",
             cursor: "pointer",
             flexShrink: 0,
           }}
@@ -131,11 +152,15 @@ const Calendar = () => {
         Calendario de Tareas
       </h2>
 
-      <div style={{ width: "100%", minWidth: "320px" }}>
+      <div style={{ 
+        width: "100%", 
+        minWidth: "320px",
+        fontSize: isMobile ? "10px" : "14px",
+      }}>
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           eventDrop={handleEventDrop}
-          locale="es"
+          locale={esLocale}
           buttonText={{
             today: "Hoy",
             month: "Mes",
@@ -179,6 +204,11 @@ const Calendar = () => {
             minute: "2-digit",
           }}
           height="auto"
+          dayMaxEventRows={3}
+          eventDisplay="block"
+          dayCellContent={(args) => ({
+            html: `<div style="font-size: ${isMobile ? '10px' : '14px'}; text-align: center">${args.dayNumberText}</div>`
+          })}
         />
       </div>
     </div>
