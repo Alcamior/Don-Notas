@@ -23,17 +23,13 @@ const Calendar = () => {
     const end = event.endStr ?? event.startStr;
 
     try {
-      await updateEventDate({
-        id,
-        start,
-        end,
-      });
+      await updateEventDate({ id, start, end });
     } catch (error) {
       alert("No se pudo actualizar la fecha del evento.");
-      info.revert(); // Revierte el cambio en el calendario
+      info.revert();
     }
   };
-  
+
   const handleDateClick = async (info: any) => {
     const title = prompt("Agrega una tarea");
     if (title) {
@@ -61,6 +57,7 @@ const Calendar = () => {
           borderRadius: "4px",
           border: "none",
           justifyContent: "space-between",
+          flexWrap: "wrap",
         }}
       >
         <div
@@ -86,6 +83,7 @@ const Calendar = () => {
             color: "#000",
             fontSize: "14px",
             flex: 1,
+            wordBreak: "break-word",
           }}
         >
           {eventInfo.event.title}
@@ -110,12 +108,19 @@ const Calendar = () => {
   };
 
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    <div
+      style={{
+        padding: "20px",
+        fontFamily: "Arial, sans-serif",
+        maxWidth: "100%",
+        overflowX: "auto",
+      }}
+    >
       <h2
         style={{
           textAlign: "center",
           color: "#2C3E50",
-          fontSize: "24px",
+          fontSize: "clamp(18px, 5vw, 24px)",
           fontWeight: "bold",
           marginBottom: "20px",
           textTransform: "uppercase",
@@ -124,53 +129,56 @@ const Calendar = () => {
         Calendario de Tareas
       </h2>
 
-      <FullCalendar
-  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-  eventDrop={handleEventDrop}
-  locale="es"
-  buttonText={{
-    today: "Hoy",
-    month: "Mes",
-    week: "Semana",
-    day: "Día"
-  }}
-  initialView="dayGridMonth"
-  dateClick={handleDateClick}
-  editable={true}
-  events={
-    events?.map((e) => ({
-      id: e._id,
-      title: e.title,
-      start: e.start,
-      end: e.end,
-      allDay: e.allDay,
-      completed: e.completed,
-      _id: e._id,
-    })) || []
-  }
-  eventContent={renderEventContent}
-  headerToolbar={{
-    left: "prev,next today",
-    center: "title",
-    right: "dayGridMonth,timeGridWeek,timeGridDay",
-  }}
-  titleFormat={(date) => {
-    const month = date.date.month + 1; // Los meses en FullCalendar van de 0 a 11
-    const year = date.date.year;
-    const monthNames = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-    return `${monthNames[month - 1]} ${year}`;
-  }}
-  eventBackgroundColor="transparent"
-  eventBorderColor="transparent"
-  eventTextColor="#2C3E50"
-  eventTimeFormat={{
-    hour: "2-digit",
-    minute: "2-digit",
-  }}
-/>
+      <div style={{ width: "100%", minWidth: "320px" }}>
+        <FullCalendar
+          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          eventDrop={handleEventDrop}
+          locale="es"
+          buttonText={{
+            today: "Hoy",
+            month: "Mes",
+            week: "Semana",
+            day: "Día",
+          }}
+          initialView="dayGridMonth"
+          dateClick={handleDateClick}
+          editable={true}
+          events={
+            events?.map((e) => ({
+              id: e._id,
+              title: e.title,
+              start: e.start,
+              end: e.end,
+              allDay: e.allDay,
+              completed: e.completed,
+              _id: e._id,
+            })) || []
+          }
+          eventContent={renderEventContent}
+          headerToolbar={{
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay",
+          }}
+          titleFormat={(date) => {
+            const month = date.date.month + 1;
+            const year = date.date.year;
+            const monthNames = [
+              "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+              "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+            ];
+            return `${monthNames[month - 1]} ${year}`;
+          }}
+          eventBackgroundColor="transparent"
+          eventBorderColor="transparent"
+          eventTextColor="#2C3E50"
+          eventTimeFormat={{
+            hour: "2-digit",
+            minute: "2-digit",
+          }}
+          height="auto"
+        />
+      </div>
     </div>
   );
 };
